@@ -22,7 +22,7 @@ export async function http<T>(request: RequestInfo): Promise<HttpResponse<T>> {
   return response;
 }
 
-export const groupBy = (array: any[]) => {
+export const groupBirthdaysByYear = (array: any[]) => {
   return array.reduce((acc, curr) => {
     const year = curr.year;
 

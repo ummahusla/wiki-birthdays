@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 
 import { FETCH_BIRTHDAYS_BY_DATE_URL } from '../utils/consts';
-import { getTodaysDate, groupBy, http } from '../utils/helpers';
+import { getTodaysDate, groupBirthdaysByYear, http } from '../utils/helpers';
 import { BirthdayResponse, BirthsProps } from '../utils/types';
 
 export function useBirthdays(): {
@@ -35,7 +35,7 @@ export function useBirthdays(): {
 
   // Group the birthdays by year
   const groupedBirthdays = useMemo(
-    () => groupBy(birthdays) as Record<string, BirthsProps[]>,
+    () => groupBirthdaysByYear(birthdays) as Record<string, BirthsProps[]>,
     [birthdays]
   );
 
