@@ -1,4 +1,7 @@
+import { Button, Spinner } from 'reactstrap';
+
 import BirthdaysList from '../../components/BirthdaysList';
+import ErrorModal from '../../components/ErrorModal';
 import { useBirthdays } from '../../hooks/useBirthdays';
 
 function List() {
@@ -6,18 +9,36 @@ function List() {
 
   return (
     <div>
-      <h1>List of births that occured on this date in the past</h1>
+      <div className="my-5">
+        <h1>List of births that occured on this date in the past</h1>
+      </div>
 
-      <>
-        {isFetching && <h1>Loading...</h1>}
+      {birthdays && Object.keys(birthdays).length === 0 && !isFetching && (
+        <Button color="primary" onClick={fetchBirthdays} disabled={isFetching}>
+          Show today's birthdays
+        </Button>
+      )}
 
-        {error && <h1>Error...</h1>}
-      </>
+      <ErrorModal
+        isOpen={error ? true : false}
+        title="Error while fetching birthdays"
+        actionNm="Fetch birthdays"
+        actionFn={fetchBirthdays}
+        body={
+          <>
+            <p>Error details:</p>
+            <pre>{JSON.stringify(error, 0, 2)}</pre>
+            <p>
+              You can retry to fetch birthdays by clicking the button below.
+            </p>
+          </>
+        }
+      />
 
-      {birthdays && Object.keys(birthdays).length === 0 && (
-        <button onClick={fetchBirthdays} disabled={isFetching}>
-          Show birthdays
-        </button>
+      {isFetching && (
+        <Spinner color="dark" className="m-5">
+          Loading...
+        </Spinner>
       )}
 
       <BirthdaysList birthdays={birthdays} />

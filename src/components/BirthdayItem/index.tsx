@@ -1,10 +1,13 @@
 interface Props {
   description: string;
+  link: string;
 }
 
-const BirthdayItem = ({ description }: Props) => (
+const BirthdayItem = ({ description, link }: Props) => (
   <div>
-    <p>{description}</p>
+    <a href={link} target="_blank" rel="noopener">
+      {description}
+    </a>
   </div>
 );
 
