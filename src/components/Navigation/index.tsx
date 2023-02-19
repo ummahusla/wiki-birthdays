@@ -1,10 +1,10 @@
-import { Container, Navbar, NavbarBrand, NavbarText } from 'reactstrap';
+import { Container, Navbar, NavbarBrand } from 'reactstrap';
 
 const Navigation = () => (
   <Navbar dark color="dark">
     <Container>
       <NavbarBrand>Births on this day</NavbarBrand>
-      <NavbarText>Source Code</NavbarText>
+      <a href="https://github.com/ummahusla/wiki-birthdays">Source Code</a>
     </Container>
   </Navbar>
 );
