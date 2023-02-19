@@ -40,7 +40,7 @@ function List() {
         body={
           <>
             <p>Error details:</p>
-            <pre>{JSON.stringify(error, 0, 2)}</pre>
+            <pre>{JSON.stringify(error)}</pre>
             <p>
               You can retry to fetch birthdays by clicking the button below.
             </p>
