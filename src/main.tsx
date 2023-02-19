@@ -1,10 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Birthdays from './views/Birthdays';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/globals.css';
+
+import Birthdays from './views/Birthdays';
+import Layout from './components/Layout';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Birthdays />
+    <Layout>
+      <Birthdays />
+    </Layout>
   </React.StrictMode>
 );
