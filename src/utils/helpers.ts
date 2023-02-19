@@ -13,7 +13,9 @@ export async function http<T>(request: RequestInfo): Promise<HttpResponse<T>> {
 
   try {
     response.parsedBody = await response.json();
-  } catch (ex) {}
+  } catch (err) {
+    throw new Error('Invalid JSON response');
+  }
 
   if (!response.ok) {
     throw new Error(response.statusText);

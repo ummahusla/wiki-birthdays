@@ -29,7 +29,9 @@ export function useBirthdays(): {
 
       setIsFetching(false);
     } catch (response) {
-      setError(response);
+      if (response instanceof Error) {
+        setError(response);
+      }
     }
   }, [isFetching]);
 
