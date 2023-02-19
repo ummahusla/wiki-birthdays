@@ -5,7 +5,12 @@ interface Props {
 
 const BirthdayItem = ({ description, link }: Props) => (
   <div>
-    <a href={link} target="_blank" rel="noopener">
+    <a
+      data-testid="birthday-item-link"
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       {description}
     </a>
   </div>

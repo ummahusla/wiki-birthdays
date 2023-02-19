@@ -2,6 +2,8 @@
 
 Data is fetched from the `https://byabbe.se/on-this-day/#/default/get__month___day__births_json` API.
 
+My education playground for `vite` and `vitest`.
+
 ## Stack
 
 - [Vite](https://vitejs.dev/)

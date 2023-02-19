@@ -9,7 +9,7 @@ interface Props {
 }
 
 const BirthdaysList = ({ birthdays }: Props) => (
-  <>
+  <div data-testid="birthdays-list">
     {Object.keys(birthdays).map((year) => (
       <div key={uuidv4()} className="py-3">
         <h2>{year}</h2>
@@ -23,7 +23,7 @@ const BirthdaysList = ({ birthdays }: Props) => (
         ))}
       </div>
     ))}
-  </>
+  </div>
 );
 
 export default memo(BirthdaysList);

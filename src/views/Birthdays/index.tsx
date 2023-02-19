@@ -13,10 +13,23 @@ function List() {
         <h1>List of births that occured on this date in the past</h1>
       </div>
 
-      {birthdays && Object.keys(birthdays).length === 0 && !isFetching && (
-        <Button color="primary" onClick={fetchBirthdays} disabled={isFetching}>
+      {isFetching && (
+        <Spinner data-testid="spinner" color="dark" className="m-5">
+          Loading...
+        </Spinner>
+      )}
+
+      {Object.keys(birthdays).length === 0 && !isFetching ? (
+        <Button
+          data-testid="fetch-button"
+          color="primary"
+          onClick={fetchBirthdays}
+          disabled={isFetching}
+        >
           Show today's birthdays
         </Button>
+      ) : (
+        <BirthdaysList birthdays={birthdays} />
       )}
 
       <ErrorModal
@@ -34,14 +47,6 @@ function List() {
           </>
         }
       />
-
-      {isFetching && (
-        <Spinner color="dark" className="m-5">
-          Loading...
-        </Spinner>
-      )}
-
-      <BirthdaysList birthdays={birthdays} />
     </div>
   );
 }
