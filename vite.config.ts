@@ -10,5 +10,6 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'happy-dom',
+    setupFiles: ['./src/setupVitest.ts'],
   },
 } as VitestConfigExport);

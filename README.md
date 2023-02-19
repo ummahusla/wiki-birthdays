@@ -10,7 +10,6 @@ My education playground for `vite` and `vitest`.
 - [React](https://reactjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [reactstrap](https://reactstrap.github.io/)
-- And the variety of small packages like [uuid](https://www.npmjs.com/package/uuid)
 
 ## Local Development
 
