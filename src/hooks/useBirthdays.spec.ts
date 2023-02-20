@@ -1,112 +1,64 @@
-import { test, expect } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { test, describe, expect, vi, beforeEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
 
 import { useBirthdays } from './useBirthdays';
-import { BirthdayResponse, BirthsProps } from '../utils/types';
+import { http } from '../utils/helpers';
+import { FETCH_BIRTHDAYS_BY_DATE_URL } from '../utils/consts';
 
-test('fetches birthdays correctly', async () => {
-  const initial: BirthdayResponse = {
-    births: [
-      {
-        year: '1461',
-        description: 'Domenico Grimani, Italian cardinal (d. 1523)',
-        wikipedia: [
-          {
-            title: 'Domenico Grimani',
-            wikipedia: 'https://en.wikipedia.org/wiki/Domenico_Grimani',
-          },
-        ],
-      },
-      {
-        year: '1946',
-        description: 'Paul Dean, Canadian guitarist',
-        wikipedia: [
-          {
-            title: 'Paul Dean (guitarist)',
-            wikipedia: 'https://en.wikipedia.org/wiki/Paul_Dean_(guitarist)',
-          },
-        ],
-      },
-      {
-        year: '1946',
-        description:
-          'Karen Silkwood, American technician and activist (d. 1974)',
-        wikipedia: [
-          {
-            title: 'Karen Silkwood',
+vi.mock('../utils/helpers', async () => {
+  const helpers = await vi.importActual('../utils/helpers');
 
-            wikipedia: 'https://wikipedia.org/wiki/Karen_Silkwood',
-          },
-        ],
-      },
-      {
-        year: '1946',
-        description: 'Peter Hudson, Australian footballer and coach',
-        wikipedia: [
-          {
-            title: 'Peter Hudson',
-            wikipedia: 'https://wikipedia.org/wiki/Peter_Hudson',
-          },
-        ],
-      },
-    ],
-    date: 'February 19',
-    wikipedia: 'https://wikipedia.org/wiki/February_19',
-  };
-  const expected: Record<string, BirthsProps[]> = {
-    '1461': [
-      {
-        year: '1461',
-        description: 'Domenico Grimani, Italian cardinal (d. 1523)',
-        wikipedia: [
-          {
-            title: 'Domenico Grimani',
-            wikipedia: 'https://en.wikipedia.org/wiki/Domenico_Grimani',
-          },
-        ],
-      },
-    ],
-    '1946': [
-      {
-        year: '1946',
-        description: 'Paul Dean, Canadian guitarist',
-        wikipedia: [
-          {
-            title: 'Paul Dean (guitarist)',
-            wikipedia: 'https://en.wikipedia.org/wiki/Paul_Dean_(guitarist)',
-          },
-        ],
-      },
-      {
-        year: '1946',
-        description:
-          'Karen Silkwood, American technician and activist (d. 1974)',
-        wikipedia: [
-          {
-            title: 'Karen Silkwood',
-            wikipedia: 'https://wikipedia.org/wiki/Karen_Silkwood',
-          },
-        ],
-      },
-      {
-        year: '1946',
-        description: 'Peter Hudson, Australian footballer and coach',
-        wikipedia: [
-          {
-            title: 'Peter Hudson',
-            wikipedia: 'https://wikipedia.org/wiki/Peter_Hudson',
-          },
-        ],
-      },
-    ],
-  };
+  // @ts-expect-error
+  return { ...helpers, http: vi.fn() };
+});
 
-  const { result } = renderHook(() => useBirthdays());
+describe('useBirthdays hook', () => {
+  const httpMock = vi.mocked(http);
 
-  fetchMock.mockResponse(JSON.stringify(initial));
+  beforeEach(() => {
+    // @ts-ignore
+    httpMock.mockImplementation(async () => ({
+      parsedBody: {
+        births: [
+          {
+            year: '1461',
+            description: 'Domenico Grimani, Italian cardinal (d. 1523)',
+            wikipedia: [
+              {
+                title: 'Domenico Grimani',
+                wikipedia: 'https://en.wikipedia.org/wiki/Domenico_Grimani',
+              },
+            ],
+          },
+        ],
+      },
+    }));
+  });
 
-  await waitFor(() => {
-    // TODO: Fix this test
-    expect(result.current.isFetching).toBe(true);
+  test('fetches birthdays correctly', async () => {
+    const hook = renderHook(() => useBirthdays());
+
+    const expected = {
+      '1461': [
+        {
+          year: '1461',
+          description: 'Domenico Grimani, Italian cardinal (d. 1523)',
+          wikipedia: [
+            {
+              title: 'Domenico Grimani',
+              wikipedia: 'https://en.wikipedia.org/wiki/Domenico_Grimani',
+            },
+          ],
+        },
+      ],
+    };
+
+    await act(async () => {
+      await hook.result.current.fetchBirthdays();
+    });
+
+    expect(http).toBeCalledWith(FETCH_BIRTHDAYS_BY_DATE_URL('2/20'));
+
+    expect(hook.result.current.birthdays).toEqual(expected);
   });
 });

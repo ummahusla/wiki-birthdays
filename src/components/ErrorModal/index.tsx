@@ -9,7 +9,7 @@ interface Props {
 }
 
 const ErrorModal = ({ isOpen, title, body, actionNm, actionFn }: Props) => (
-  <Modal isOpen={isOpen}>
+  <Modal isOpen={isOpen} data-testid="error-modal">
     <ModalHeader>{title} </ModalHeader>
 
     <ModalBody>{body}</ModalBody>

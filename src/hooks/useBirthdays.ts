@@ -36,8 +36,8 @@ export function useBirthdays(): {
   }, [isFetching]);
 
   // Group the birthdays by year
-  const groupedBirthdays = useMemo(
-    () => groupBirthdaysByYear(birthdays) as Record<string, BirthsProps[]>,
+  const groupedBirthdays: Record<string, BirthsProps[]> = useMemo(
+    () => groupBirthdaysByYear(birthdays),
     [birthdays]
   );
 

@@ -1,24 +1,93 @@
-import { expect, test } from 'vitest';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { expect, test, vi, describe, beforeEach, afterEach } from 'vitest';
+import { render, fireEvent } from '@testing-library/react';
 
 import List from './index';
+import { useBirthdays } from '../../hooks/useBirthdays';
+import { BirthsProps } from '../../utils/types';
 
-test('display birthdays list view correctly', async () => {
-  render(<List />);
+vi.mock('../../hooks/useBirthdays');
 
-  expect(
-    screen.getByText('List of births that occured on this date in the past')
-  ).toBeTruthy();
+const birthdayStub: BirthsProps = {
+  year: 'year',
+  description: 'desc',
+  wikipedia: [
+    {
+      title: 'title',
+      wikipedia: 'wiki',
+    },
+  ],
+};
 
-  const button = await screen.getByTestId('fetch-button');
-  expect(button).toBeTruthy();
-  expect(button.textContent).toBe("Show today's birthdays");
+describe('Birthdays list view ', () => {
+  const fetchBirthdays = vi.fn();
+  const useBirthDaysMock = vi.mocked(useBirthdays);
 
-  fireEvent.click(button);
+  beforeEach(() => {
+    useBirthDaysMock.mockReturnValue({
+      birthdays: {
+        test: [birthdayStub],
+      },
+      fetchBirthdays,
+      error: undefined,
+      isFetching: false,
+    });
+  });
 
-  const spinner = await screen.getByTestId('spinner');
-  expect(spinner).toBeTruthy();
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
 
-  const list = await screen.getByTestId('birthdays-list');
-  expect(list).toBeTruthy();
+  test('display birthdays list view correctly', async () => {
+    const { queryByTestId } = render(<List />);
+
+    expect(queryByTestId('spinner')).toBeFalsy();
+    expect(queryByTestId('fetch-button')).toBeFalsy();
+    expect(queryByTestId('birthdays-list')).toBeTruthy();
+  });
+
+  test('shows spinner', async () => {
+    useBirthDaysMock.mockReturnValue({
+      fetchBirthdays,
+      error: undefined,
+      birthdays: {},
+      isFetching: true,
+    });
+
+    const { queryByTestId } = render(<List />);
+
+    const spinner = queryByTestId('spinner');
+    expect(spinner).toBeTruthy();
+  });
+
+  test('fetches birthdays on click', async () => {
+    useBirthDaysMock.mockReturnValue({
+      fetchBirthdays,
+      error: undefined,
+      birthdays: {},
+      isFetching: false,
+    });
+
+    const { getByTestId } = render(<List />);
+
+    const button = getByTestId('fetch-button');
+
+    fireEvent.click(button);
+
+    expect(fetchBirthdays).toBeCalled();
+  });
+
+  test('shows error modal on error', async () => {
+    useBirthDaysMock.mockReturnValue({
+      fetchBirthdays,
+      error: 'error',
+      birthdays: {},
+      isFetching: false,
+    });
+
+    const { getByTestId } = render(<List />);
+
+    const errorModal = getByTestId('error-modal');
+
+    expect(errorModal).toBeTruthy();
+  });
 });

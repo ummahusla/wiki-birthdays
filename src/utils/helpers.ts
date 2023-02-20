@@ -1,4 +1,4 @@
-import { HttpResponse } from './types';
+import { BirthsProps, HttpResponse } from './types';
 
 export const getTodaysDate = (): string => {
   const date = new Date();
@@ -24,7 +24,7 @@ export async function http<T>(request: RequestInfo): Promise<HttpResponse<T>> {
   return response;
 }
 
-export const groupBirthdaysByYear = (array: any[]) => {
+export const groupBirthdaysByYear = (array: BirthsProps[]) => {
   return array.reduce((acc, curr) => {
     const year = curr.year;
 
@@ -34,5 +34,5 @@ export const groupBirthdaysByYear = (array: any[]) => {
     acc[year].push(curr);
 
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {} as Record<string, BirthsProps[]>);
 };
