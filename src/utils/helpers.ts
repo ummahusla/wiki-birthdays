@@ -1,11 +1,17 @@
 import { BirthsProps, HttpResponse } from './types';
 
-export const getTodaysDate = (): string => {
+export const getTodaysDate = (): {
+  m: number;
+  d: number;
+} => {
   const date = new Date();
   const month = date.getMonth() + 1;
   const day = date.getDate();
 
-  return `${month}/${day}`;
+  return {
+    m: month,
+    d: day,
+  };
 };
 
 export async function http<T>(request: RequestInfo): Promise<HttpResponse<T>> {

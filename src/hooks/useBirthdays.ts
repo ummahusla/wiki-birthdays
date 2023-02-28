@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { useState, useCallback, useMemo } from 'react';
 
 import { FETCH_BIRTHDAYS_BY_DATE_URL } from '../utils/consts';
@@ -9,7 +10,31 @@ export function useBirthdays(): {
   fetchBirthdays: () => Promise<void>;
   isFetching: boolean;
   error: unknown;
+  prevDay: () => void;
+  nextDay: () => void;
 } {
+  const { m, d } = getTodaysDate();
+
+  const DATE_FORMAT = (m: number, d: number): string => {
+    return `${m}/${d}`;
+  };
+
+  const initialDate = DateTime.now().set({
+    month: m,
+    day: d,
+  });
+  const [date, setDate] = useState<DateTime>(initialDate);
+
+  const handlePreviousDateChange = () => {
+    setDate(date.minus({ days: 1 }));
+    fetchBirthdays();
+  };
+
+  const handleNextDateChange = () => {
+    setDate(date.plus({ days: 1 }));
+    fetchBirthdays();
+  };
+
   // Create a state variable to store the data from the API
   const [birthdays, setBirthdays] = useState<BirthsProps[]>([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -22,7 +47,7 @@ export function useBirthdays(): {
 
     try {
       const data = await http<BirthdayResponse>(
-        FETCH_BIRTHDAYS_BY_DATE_URL(getTodaysDate())
+        FETCH_BIRTHDAYS_BY_DATE_URL(DATE_FORMAT(date.month, date.day))
       );
 
       setBirthdays(data?.parsedBody?.births || []);
@@ -33,7 +58,7 @@ export function useBirthdays(): {
         setError(response);
       }
     }
-  }, [isFetching]);
+  }, [isFetching, date]);
 
   // Group the birthdays by year
   const groupedBirthdays: Record<string, BirthsProps[]> = useMemo(
@@ -41,5 +66,12 @@ export function useBirthdays(): {
     [birthdays]
   );
 
-  return { birthdays: groupedBirthdays, fetchBirthdays, isFetching, error };
+  return {
+    birthdays: groupedBirthdays,
+    fetchBirthdays,
+    isFetching,
+    error,
+    prevDay: handlePreviousDateChange,
+    nextDay: handleNextDateChange,
+  };
 }

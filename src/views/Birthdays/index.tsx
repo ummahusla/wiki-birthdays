@@ -5,7 +5,8 @@ import ErrorModal from '../../components/ErrorModal';
 import { useBirthdays } from '../../hooks/useBirthdays';
 
 function List() {
-  const { birthdays, fetchBirthdays, isFetching, error } = useBirthdays();
+  const { birthdays, fetchBirthdays, isFetching, error, prevDay, nextDay } =
+    useBirthdays();
 
   return (
     <div>
@@ -29,7 +30,30 @@ function List() {
           Show today's birthdays
         </Button>
       ) : (
-        <BirthdaysList birthdays={birthdays} />
+        <>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            className="mb-5"
+          >
+            <Button
+              color="secondary"
+              onClick={prevDay}
+              disabled={isFetching}
+              style={{ marginRight: '10px' }}
+            >
+              Show previous birthdays
+            </Button>
+
+            <Button color="secondary" onClick={nextDay} disabled={isFetching}>
+              Show tomorrow's birthdays
+            </Button>
+          </div>
+
+          <BirthdaysList birthdays={birthdays} />
+        </>
       )}
 
       <ErrorModal
